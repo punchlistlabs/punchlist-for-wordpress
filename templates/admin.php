@@ -26,9 +26,13 @@
 
             <a id="create-quick-project" class="button button-primary" target="_blank" alt="Create a Punchlist Project">Create Punchlist Project for <?php echo get_bloginfo('name'); ?></a>
 
-
     </form>
 
     <h3>To unlock the full functionality of this plugin you must get an API key from your <a href="https://app.usepunchlist.com/settings">Punchlist account.</a></h3>
 
+    <form id="set-up-api">
+        <label for="api-key">API Key
+            <input type="password" name="api-key" />
+            <a id="submit-api-key" class="button button-primary" alt="Integrate with Punchlist API">Verify API Integration</a>
+    </form>
 </div><!-- .wrap -->
