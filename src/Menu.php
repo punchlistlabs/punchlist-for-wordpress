@@ -13,7 +13,7 @@ class Menu
     }
 
     /**
-     * Creates the submenu item and calls on the Submenu Page object to render
+     * Creates the submenu item and calls on the Menu Page object to render
      * the actual contents of the page.
      */
     public function addMenuPage()

@@ -33,6 +33,6 @@
     <form id="set-up-api">
         <label for="api-key">API Key
             <input type="password" name="api-key" />
-            <a id="submit-api-key" class="button button-primary" alt="Integrate with Punchlist API">Verify API Integration</a>
+            <input type="submit" id="submit-api-key" class="button button-primary" alt="Integrate with Punchlist API" value="Verify API Integration" />
     </form>
 </div><!-- .wrap -->
