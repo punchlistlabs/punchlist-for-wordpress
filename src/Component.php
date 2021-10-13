@@ -3,7 +3,7 @@
 namespace Punchlist;
 
 
-class Page
+class Component
 {
     protected $templates;
     protected $templateDir;

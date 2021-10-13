@@ -1,8 +1,9 @@
 <?php
 
 use Punchlist\Menu;
-use Punchlist\Page;
+use Punchlist\Component;
 use Punchlist\Api;
+use Punchlist\DSPublicPostPreview;
 
 /*
 Plugin Name: WP Punchlist
@@ -11,6 +12,23 @@ Description: Harness the magic of Punchlist from the WP Dashboard
 Author: Punchlist Labs
 Version: 1.0
 Author URI: https://usepunchlist.com/
+License: GPLv2 or later
+
+Copyright (C) 2021 Punchlist Labs Inc.
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 // If this file is called directly, abort.
@@ -26,21 +44,35 @@ $dotenv->load();
 
 add_action('wp_enqueue_scripts', 'loadScriptsAndStyles');
 add_action('admin_enqueue_scripts', 'adminLoadScriptsAndStyles');
+add_action('admin_menu', 'addPunchlistToAdminMenu');
+add_action('wp_ajax_pl_check_integration', 'checkIntegration');
+
+// Only enable this functionality after verifying the API key
+// is in place
+// if (get_user_meta(get_current_user_id(), 'pl-api-key', true)) {
+add_action('wp_ajax_pl-create-project-edit-screen', 'createPostPreview');
+add_action('add_meta_boxes', 'addPlMetaBox');
+add_action('transition_post_status', array('Punchlist\DSPublicPostPreview', 'unregister_public_preview_on_status_change'), 20, 3);
+add_action('post_updated', array('Punchlist\DSPublicPostPreview', 'unregister_public_preview_on_edit'), 20, 2);
+
+if (!is_admin()) {
+    add_action('pre_get_posts', array('Punchlist\DSPublicPostPreview', 'show_public_preview'));
+    add_filter('query_vars', array('Punchlist\DSPublicPostPreview', 'add_query_var'));
+    // Add the query var to WordPress SEO by Yoast whitelist.
+    add_filter('wpseo_whitelist_permalink_vars', array('Punchlist\DSPublicPostPreview', 'add_query_var'));
+} else {
+    add_action('post_submitbox_misc_actions', array('Punchlist\DSPublicPostPreview', 'post_submitbox_misc_actions'));
+    add_action('save_post', array('Punchlist\DSPublicPostPreview', 'register_public_preview'), 20, 2);
+    // add_action('wp_ajax_public-post-preview', array('Punchlist\DSPublicPostPreview', 'ajax_register_public_preview'));
+    add_action('admin_enqueue_scripts', array('Punchlist\DSPublicPostPreview', 'enqueue_script'));
+    add_filter('display_post_states', array('Punchlist\DSPublicPostPreview', 'display_preview_state'), 20, 2);
+}
+// }
 
 function loadScriptsAndStyles()
 {
-    //localizeVariables();
-    wp_enqueue_script('punchlist', 'https://static.usepunchlist.com/js/usepunchlist.min.js?09182021', null, '1.0', true);
+    wp_enqueue_script('punchlist', 'https://static.usepunchlist.com/js/usepunchlist.min.js?10122021', null, '1.0', true);
 }
-
-// function localizeVariables()
-// {
-//     wp_localize_script('wp-pucnhlist', 'localVars', [
-//         'ajaxurl' => admin_url('admin-ajax.php'),
-//         'plUrl' => $_ENV['PUNCHLIST_URL'],
-//         'qpUrl' => $_ENV['PUNCHLIST_URL'] . '/project/create?domain' . urlencode(site_url())
-//     ]);
-// }
 
 function adminLoadScriptsAndStyles()
 {
@@ -50,10 +82,13 @@ function adminLoadScriptsAndStyles()
         'plUrl' => $_ENV['PUNCHLIST_URL'],
         'qpUrl' => $_ENV['PUNCHLIST_URL'] . '/project/create?domain=' . urlencode(site_url())
     ]);
-}
 
-add_action('admin_menu', 'addPunchlistToAdminMenu');
-add_action('wp_ajax_pl_check_integration', 'checkIntegration');
+    wp_enqueue_script('pl-create-project', plugin_dir_url(__DIR__) . 'wp-punchlist/js/plCreateProject.js', ['jquery'], null, true);
+    wp_localize_script('pl-create-project', 'localVars', [
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'plUrl' => $_ENV['PUNCHLIST_URL'],
+    ]);
+}
 
 /** 
  * Get punchlist on the sidebar
@@ -61,7 +96,7 @@ add_action('wp_ajax_pl_check_integration', 'checkIntegration');
 
 function addPunchListToAdminMenu()
 {
-    $page = new Page(['admin']);
+    $page = new Component(['admin'], __DIR__ . '/templates/pages/');
     $menu = new Menu($page);
     $menu->addMenuPage();
 }
@@ -81,4 +116,44 @@ function checkIntegration()
 
     echo $res;
     die(1);
+}
+
+/** 
+ * Create a project through the Punchlist API
+ */
+
+function createPostPreview()
+{
+    $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
+    $api = new Api($apiKey);
+
+    // Ensure the post status is correct
+    if (!in_array(get_post_status($postId), ['publish', 'future', 'draft', 'pending'])) {
+        wp_send_json_error(['message' => 'Unable to create a Punchlist project at this time. Did you save the post?'], 400);
+    }
+
+    $publicUrl = DSPublicPostPreview::publicPreviewUrl($_POST['post_ID']);
+
+    wp_send_json(['message' => 'success', 'data' => ['public_url' => $publicUrl]]);
+}
+
+function createProject()
+{
+    $projectName = $_POST['name'] ?? get_bloginfo('name') . ' @ ' . date('m-d-Y');
+    $project = $api->createProject($publicUrl, $projectName);
+    if (json_decode($project)->success === true) {
+        update_post_meta($_POST['post_ID'], 'pl-project-url', $publicUrl);
+    }
+}
+
+/**\
+ * Add a PL metabox to the edit screens to allow for 
+ * project creation
+ */
+
+function addPlMetaBox()
+{
+    $metaBox = new Component(['edit'], __DIR__ . '/templates/metaboxes/');
+    $menu = new Menu($metaBox);
+    $menu->addMetaBox();
 }
