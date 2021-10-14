@@ -137,7 +137,8 @@ function createPostPreview()
     $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
     $api = new Api($apiKey);
 
-    $test = $api->post('/projects');
+    // $test = $api->post('/projects');
+    $test = $api->createProject("https://wp.test/?p=113&preview=1&_ppp=15b9e1572d", 'somanemass');
     error_log(print_r($test, 1));
 
     wp_send_json(['message' => 'success', 'data' => ['public_url' => $publicUrl]]);
