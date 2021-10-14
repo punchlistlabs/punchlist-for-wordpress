@@ -50,7 +50,8 @@ add_action('wp_ajax_pl_check_integration', 'checkIntegration');
 // Only enable this functionality after verifying the API key
 // is in place
 // if (get_user_meta(get_current_user_id(), 'pl-api-key', true)) {
-add_action('wp_ajax_pl-create-project-edit-screen', 'createPostPreview');
+add_action('wp_ajax_pl-create-preview-edit-screen', 'createPostPreview');
+add_action('wp_ajax_pl-create-project-edit-screen', 'createProject');
 add_action('add_meta_boxes', 'addPlMetaBox');
 add_action('transition_post_status', array('Punchlist\DSPublicPostPreview', 'unregister_public_preview_on_status_change'), 20, 3);
 add_action('post_updated', array('Punchlist\DSPublicPostPreview', 'unregister_public_preview_on_edit'), 20, 2);
@@ -76,6 +77,7 @@ function loadScriptsAndStyles()
 
 function adminLoadScriptsAndStyles()
 {
+    wp_enqueue_script('axios', 'https://unpkg.com/axios/dist/axios.min.js'); // Sorry jQuery was falling flat in cross domain requests
     wp_enqueue_script('pl-admin-script', plugin_dir_url(__DIR__) . 'wp-punchlist/js/plAdminScript.js', ['jquery'], null, true);
     wp_localize_script('pl-admin-script', 'localVars', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
@@ -87,6 +89,7 @@ function adminLoadScriptsAndStyles()
     wp_localize_script('pl-create-project', 'localVars', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'plUrl' => $_ENV['PUNCHLIST_URL'],
+        'plApiKey' => get_user_meta(get_current_user_id(), 'pl-api-key', true),
     ]);
 }
 
@@ -124,26 +127,46 @@ function checkIntegration()
 
 function createPostPreview()
 {
-    $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
-    $api = new Api($apiKey);
-
     // Ensure the post status is correct
-    if (!in_array(get_post_status($postId), ['publish', 'future', 'draft', 'pending'])) {
+    if (!in_array(get_post_status($_POST['post_ID']), ['publish', 'future', 'draft', 'pending'])) {
         wp_send_json_error(['message' => 'Unable to create a Punchlist project at this time. Did you save the post?'], 400);
     }
 
     $publicUrl = DSPublicPostPreview::publicPreviewUrl($_POST['post_ID']);
 
+    $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
+    $api = new Api($apiKey);
+
+    $test = $api->post('/projects');
+    error_log(print_r($test, 1));
+
     wp_send_json(['message' => 'success', 'data' => ['public_url' => $publicUrl]]);
 }
 
+// function createProject($url, $postId, $projectName = false)
+// {
+//     $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
+//     $api = new Api($apiKey);
+
+//     $projectName = $_projectName ?? get_bloginfo('name') . ' @ ' . date('m-d-Y');
+//     $project = $api->createProject($_POST['url'], $projectName);
+//     if (json_decode($project)->url) {
+//         update_post_meta($postId, 'pl-project-url', $project);
+//     }
+//     error_log(print_r($project, 1));
+// }
+
 function createProject()
 {
+    $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
+    $api = new Api($apiKey);
+
     $projectName = $_POST['name'] ?? get_bloginfo('name') . ' @ ' . date('m-d-Y');
-    $project = $api->createProject($publicUrl, $projectName);
-    if (json_decode($project)->success === true) {
-        update_post_meta($_POST['post_ID'], 'pl-project-url', $publicUrl);
+    $project = $api->createProject($_POST['url'], $projectName);
+    if (json_decode($project)->url) {
+        update_post_meta($_POST['post_ID'], 'pl-project-url', $project);
     }
+    wp_send_json($project);
 }
 
 /**\
