@@ -36,11 +36,9 @@ if (!defined('WPINC')) {
     die;
 }
 
-
 require __DIR__ . '/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
-
 
 add_action('wp_enqueue_scripts', 'loadScriptsAndStyles');
 add_action('admin_enqueue_scripts', 'adminLoadScriptsAndStyles');
@@ -70,7 +68,6 @@ function loadScriptsAndStyles()
 
 function adminLoadScriptsAndStyles()
 {
-    wp_enqueue_script('axios', 'https://unpkg.com/axios/dist/axios.min.js'); // Sorry jQuery was falling flat in cross domain requests
     wp_enqueue_script('pl-admin-script', plugin_dir_url(__DIR__) . 'wp-punchlist/js/plAdminScript.js', ['jquery'], null, true);
     wp_localize_script('pl-admin-script', 'localVars', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
@@ -120,31 +117,27 @@ function checkIntegration()
 
 function createPostPreview()
 {
-    // Ensure the post status is correct
-    if (!in_array(get_post_status($_POST['post_ID']), ['publish', 'future', 'draft', 'pending'])) {
-        wp_send_json_error(['message' => 'Unable to create a Punchlist project at this time. Did you save the post?'], 400);
-    }
+    if (check_ajax_referer('pl-create-project-edit-screen')) {
+        if (!in_array(get_post_status($_POST['post_ID']), ['publish', 'future', 'draft', 'pending'])) {
+            wp_send_json_error(['message' => 'Unable to create a Punchlist project at this time. Did you save the post?'], 400);
+        }
 
-    $publicUrl = DSPublicPostPreview::publicPreviewUrl($_POST['post_ID']);
-    error_log('*********');
-    error_log($publicUrl);
-    error_log('*********');
+        $publicUrl = DSPublicPostPreview::publicPreviewUrl($_POST['post_ID']);
+        $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
+        $api = new Api($apiKey);
 
-    $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
-    $api = new Api($apiKey);
+        $projectName = $_POST['name'] ?? bloginfo('name') . ' ' . date('m-d-Y');
+        $newProject = $api->createProject($publicUrl, $projectName);
 
-    // $test = $api->post('/projects');
-    $projectName = $_POST['name'] ?? bloginfo('name') . ' ' . date('m-d-Y');
-    $newProject = $api->createProject($publicUrl, $projectName);
-
-    if ($newProject->url) {
-        update_post_meta($_POST['post_ID'], 'pl-project-url', $newProject->url);
-        wp_send_json(['message' => 'success', 'data' => ['url' => $newProject->url]]);
+        if ($newProject->url) {
+            update_post_meta($_POST['post_ID'], 'pl-project-url', $newProject->url);
+            wp_send_json(['message' => 'success', 'data' => ['url' => $newProject->url]]);
+        } else {
+            wp_send_json_error(['message' => 'Error creating project'], 400);
+        }
     } else {
-        wp_send_json_error(['message' => 'Error creating project'], 400);
+        wp_send_json_error('Access denied', 403);
     }
-
-    die();
 }
 
 

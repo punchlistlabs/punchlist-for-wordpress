@@ -10,15 +10,20 @@
         {
           post_ID: $("#post_ID").val(),
           checked: true,
-          nonce: $("#pl-create-project-edit-screen-nonce").val(),
+          _ajax_nonce: $("#plnonce").val(),
           name: $(".editor-post-title__input").val() || null,
           action: "pl-create-project-edit-screen",
         },
         function (res) {
-          console.dir(res.data.url);
-          $("#pl-create-project-edit-screen").before(`<p>${res.data.url}</p>`);
-          //const plProject = requestPunchlistProject(res.data.public_url);
-          //console.log(plProject);
+          $("#pl-create-project-edit-screen").text("Creating project...");
+          setTimeout(() => {
+            $("#pl-create-project-edit-screen")
+              .text("Go To Punchlist Project")
+              .removeClass("button-primary")
+              .addClass("button-secondary")
+              .attr({ href: res.data.url, target: "_blank" })
+              .off("click");
+          }, 6000);
         }
       ).fail((err) => {
         // alert(err.responseJSON.data.message)
