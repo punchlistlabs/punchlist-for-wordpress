@@ -3,6 +3,7 @@
 use Punchlist\Menu;
 use Punchlist\Component;
 use Punchlist\Api;
+use Punchlist\Preview;
 use Punchlist\DSPublicPostPreview;
 
 /*
@@ -50,9 +51,9 @@ add_action('transition_post_status', array('Punchlist\DSPublicPostPreview', 'unr
 add_action('post_updated', array('Punchlist\DSPublicPostPreview', 'unregister_public_preview_on_edit'), 20, 2);
 
 if (!is_admin()) {
-    add_action('pre_get_posts', array('Punchlist\DSPublicPostPreview', 'show_public_preview'));
-    add_filter('query_vars', array('Punchlist\DSPublicPostPreview', 'add_query_var'));
-    add_filter('wpseo_whitelist_permalink_vars', array('Punchlist\DSPublicPostPreview', 'add_query_var'));
+    add_action('pre_get_posts', ['Punchlist\Preview', 'showPreview']);
+    // add_filter('query_vars', array('Punchlist\DSPublicPostPreview', 'add_query_var'));
+    // add_filter('wpseo_whitelist_permalink_vars', array('Punchlist\DSPublicPostPreview', 'add_query_var'));
 } else {
     add_action('post_submitbox_misc_actions', array('Punchlist\DSPublicPostPreview', 'post_submitbox_misc_actions'));
     add_action('save_post', array('Punchlist\DSPublicPostPreview', 'register_public_preview'), 20, 2);
@@ -122,12 +123,15 @@ function createPostPreview()
             wp_send_json_error(['message' => 'Unable to create a Punchlist project at this time. Did you save the post?'], 400);
         }
 
-        $publicUrl = DSPublicPostPreview::publicPreviewUrl($_POST['post_ID']);
+        $preview = new Preview(get_post($_POST['post_ID']));
+        $preview->createPreview();
+
+        //$publicUrl = DSPublicPostPreview::publicPreviewUrl($_POST['post_ID']);
         $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
         $api = new Api($apiKey);
 
         $projectName = $_POST['name'] ?? bloginfo('name') . ' ' . date('m-d-Y');
-        $newProject = $api->createProject($publicUrl, $projectName);
+        $newProject = $api->createProject($preview->link, $projectName);
 
         if ($newProject->url) {
             update_post_meta($_POST['post_ID'], 'pl-project-url', $newProject->url);
