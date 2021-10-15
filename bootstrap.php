@@ -46,12 +46,7 @@ add_action('wp_enqueue_scripts', 'loadScriptsAndStyles');
 add_action('admin_enqueue_scripts', 'adminLoadScriptsAndStyles');
 add_action('admin_menu', 'addPunchlistToAdminMenu');
 add_action('wp_ajax_pl_check_integration', 'checkIntegration');
-
-// Only enable this functionality after verifying the API key
-// is in place
-// if (get_user_meta(get_current_user_id(), 'pl-api-key', true)) {
-add_action('wp_ajax_pl-create-preview-edit-screen', 'createPostPreview');
-add_action('wp_ajax_pl-create-project-edit-screen', 'createProject');
+add_action('wp_ajax_pl-create-project-edit-screen', 'createPostPreview');
 add_action('add_meta_boxes', 'addPlMetaBox');
 add_action('transition_post_status', array('Punchlist\DSPublicPostPreview', 'unregister_public_preview_on_status_change'), 20, 3);
 add_action('post_updated', array('Punchlist\DSPublicPostPreview', 'unregister_public_preview_on_edit'), 20, 2);
@@ -59,12 +54,10 @@ add_action('post_updated', array('Punchlist\DSPublicPostPreview', 'unregister_pu
 if (!is_admin()) {
     add_action('pre_get_posts', array('Punchlist\DSPublicPostPreview', 'show_public_preview'));
     add_filter('query_vars', array('Punchlist\DSPublicPostPreview', 'add_query_var'));
-    // Add the query var to WordPress SEO by Yoast whitelist.
     add_filter('wpseo_whitelist_permalink_vars', array('Punchlist\DSPublicPostPreview', 'add_query_var'));
 } else {
     add_action('post_submitbox_misc_actions', array('Punchlist\DSPublicPostPreview', 'post_submitbox_misc_actions'));
     add_action('save_post', array('Punchlist\DSPublicPostPreview', 'register_public_preview'), 20, 2);
-    // add_action('wp_ajax_public-post-preview', array('Punchlist\DSPublicPostPreview', 'ajax_register_public_preview'));
     add_action('admin_enqueue_scripts', array('Punchlist\DSPublicPostPreview', 'enqueue_script'));
     add_filter('display_post_states', array('Punchlist\DSPublicPostPreview', 'display_preview_state'), 20, 2);
 }

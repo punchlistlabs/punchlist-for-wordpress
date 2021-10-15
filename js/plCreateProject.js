@@ -10,9 +10,9 @@
         {
           post_ID: $("#post_ID").val(),
           checked: true,
-          nonce: $("#pl-create-preview-edit-screen-nonce").val(),
+          nonce: $("#pl-create-project-edit-screen-nonce").val(),
           name: $(".editor-post-title__input").val() || null,
-          action: "pl-create-preview-edit-screen",
+          action: "pl-create-project-edit-screen",
         },
         function (res) {
           console.dir(res.data.url);
