@@ -51,12 +51,14 @@ class Preview
             return $posts;
         }
 
-        $post_id = (int) $posts[0]->ID;
+        $postId = (int) $posts[0]->ID;
 
-        // If the post has gone live, redirect to it's proper permalink.
-        //self::maybe_redirect_to_published_post($post_id);
+        // If the post has gone live, redirect to its proper permalink.
+        if (in_array(get_post_status($postId), ['publish', 'private'])) {
+            wp_safe_redirect(get_permalink($postId), 301);
+            exit;
+        }
 
-        // if (self::postHasPreview($post_id, $pluid)) {
         // Set post status to publish so that it's visible.
         $posts[0]->post_status = 'publish';
 
@@ -64,7 +66,6 @@ class Preview
         add_filter('comments_open', '__return_false');
         add_filter('pings_open', '__return_false');
         add_filter('wp_link_pages_link', array(__CLASS__, 'filter_wp_link_pages_link'), 10, 2);
-        // }
 
         return $posts;
     }
