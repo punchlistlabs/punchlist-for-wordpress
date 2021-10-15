@@ -26,7 +26,7 @@ class Api
 
     public function createProject($url, $name)
     {
-        return $this->post('/projects/alt', ['form_params' => ['domain' => $url, 'name' => $name, 'type' => 'web']]);
+        return $this->post('/projects/alt', ['form_params' => ['domain' => $url, 'name' => $name, 'type' => 'web', 'no_proxy' => true]]);
     }
 
     public function get($path)
@@ -44,8 +44,6 @@ class Api
             $postArgs
         );
 
-        return $res->getBody()->getContents();
-
-        // return wp_remote_post($_ENV['PUNCHLIST_URL'] . $path, $postArgs);
+        return json_decode($res->getBody()->getContents());
     }
 }

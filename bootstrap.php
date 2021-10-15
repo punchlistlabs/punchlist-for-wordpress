@@ -72,7 +72,7 @@ if (!is_admin()) {
 
 function loadScriptsAndStyles()
 {
-    wp_enqueue_script('punchlist', 'https://static.usepunchlist.com/js/usepunchlist.min.js?10122021', null, '1.0', true);
+    wp_enqueue_script('punchlist', $_ENV['PUNCHLIST_SCRIPT'], null, '1.0', true);
 }
 
 function adminLoadScriptsAndStyles()
@@ -133,42 +133,27 @@ function createPostPreview()
     }
 
     $publicUrl = DSPublicPostPreview::publicPreviewUrl($_POST['post_ID']);
+    error_log('*********');
+    error_log($publicUrl);
+    error_log('*********');
 
     $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
     $api = new Api($apiKey);
 
     // $test = $api->post('/projects');
-    $test = $api->createProject("https://wp.test/?p=113&preview=1&_ppp=15b9e1572d", 'somanemass');
-    error_log(print_r($test, 1));
+    $projectName = $_POST['name'] ?? bloginfo('name') . ' ' . date('m-d-Y');
+    $newProject = $api->createProject($publicUrl, $projectName);
 
-    wp_send_json(['message' => 'success', 'data' => ['public_url' => $publicUrl]]);
-}
-
-// function createProject($url, $postId, $projectName = false)
-// {
-//     $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
-//     $api = new Api($apiKey);
-
-//     $projectName = $_projectName ?? get_bloginfo('name') . ' @ ' . date('m-d-Y');
-//     $project = $api->createProject($_POST['url'], $projectName);
-//     if (json_decode($project)->url) {
-//         update_post_meta($postId, 'pl-project-url', $project);
-//     }
-//     error_log(print_r($project, 1));
-// }
-
-function createProject()
-{
-    $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
-    $api = new Api($apiKey);
-
-    $projectName = $_POST['name'] ?? get_bloginfo('name') . ' @ ' . date('m-d-Y');
-    $project = $api->createProject($_POST['url'], $projectName);
-    if (json_decode($project)->url) {
-        update_post_meta($_POST['post_ID'], 'pl-project-url', $project);
+    if ($newProject->url) {
+        update_post_meta($_POST['post_ID'], 'pl-project-url', $newProject->url);
+        wp_send_json(['message' => 'success', 'data' => ['url' => $newProject->url]]);
+    } else {
+        wp_send_json_error(['message' => 'Error creating project'], 400);
     }
-    wp_send_json($project);
+
+    die();
 }
+
 
 /**\
  * Add a PL metabox to the edit screens to allow for 
