@@ -10,16 +10,13 @@
         "api-key": $('input[name="api-key"]').val(),
         action: "pl_check_integration",
       },
-      {
-        success: (data, status) => {
-          alert(
-            "API Integration Verified. Create Punchlist projects from the post editor."
-          );
-        },
-        error: (xhr, status, err) => {
-          console.log(err);
-        },
+      (data, status) => {
+        alert(
+          "API Integration Verified. Create Punchlist projects from the post editor."
+        );
       }
-    );
+    ).fail((err) => {
+      alert(err.responseJSON.data.message);
+    });
   });
 })(this.jQuery);

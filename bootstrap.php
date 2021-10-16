@@ -104,12 +104,13 @@ function checkIntegration()
     $api = new Api($_POST['api-key']);
     $res = $api->verifyIntegration();
 
-    if (json_decode($res)->success === true) {
+    if (json_decode($res)->data->ping === 'pong') {
         update_user_meta(get_current_user_id(), 'pl-api-key', $_POST['api-key']);
+        wp_send_json(['message' => 'success']);
+    } else {
+        update_user_meta(get_current_user_id(), 'pl-api-key', null);
+        wp_send_json_error(['message' => 'Invalid API key'], 401);
     }
-
-    echo $res;
-    die(1);
 }
 
 /** 
