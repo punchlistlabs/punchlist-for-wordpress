@@ -4,7 +4,6 @@ use Punchlist\Menu;
 use Punchlist\Component;
 use Punchlist\Api;
 use Punchlist\Preview;
-use Punchlist\DSPublicPostPreview;
 
 /*
 Plugin Name: WP Punchlist

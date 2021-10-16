@@ -12,11 +12,11 @@
     <hr>
     <form id="create-project">
         <div>
+            <p><small>This will create a project using the home page of the site.<br>You can create projects for draft previews by registering an API key</small></p>
             <p>
                 <?php wp_nonce_field('pl-create-project', 'pl-create-project'); ?>
-                <a id="create-quick-project" class="button button-primary" target="_blank" alt="Create a Quick Project">Create a Quick Project for <?php echo get_bloginfo('name'); ?></a>
+                <a id="create-quick-project" class="button button-primary" target="_blank" alt="Create a Quick Project">Create a Quick Project for<br><?php echo get_bloginfo('name'); ?></a>
             </p>
-            <p><small>This will create a project using the home page of the site. You can create projects for draft previews by registering an API key</small></p>
         </div>
     </form>
 </div><!-- .wrap -->

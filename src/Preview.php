@@ -1,5 +1,37 @@
 <?php
 
+/**
+ * Plugin Name: Public Post Preview
+ * Version: 2.9.3
+ * Description: Allow anonymous users to preview a post before it is published.
+ * Author: Dominik Schilling
+ * Author URI: https://dominikschilling.de/
+ * Plugin URI: https://dominikschilling.de/wp-plugins/public-post-preview/en/
+ * Text Domain: public-post-preview
+ * Requires at least: 5.0
+ * Tested up to: 5.7
+ * Requires PHP: 5.6
+ * License: GPLv2 or later
+ *
+ * Previously (2009-2011) maintained by Jonathan Dingman and Matt Martz.
+ *
+ *  Copyright (C) 2012-2021 Dominik Schilling
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 namespace Punchlist;
 
 class Preview
