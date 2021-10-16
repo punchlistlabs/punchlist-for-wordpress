@@ -72,6 +72,9 @@ function adminLoadScriptsAndStyles()
         'plUrl' => $_ENV['PUNCHLIST_URL'],
         'plApiKey' => get_user_meta(get_current_user_id(), 'pl-api-key', true),
     ]);
+
+    wp_register_style('pl_admin_styles', plugin_dir_url(__FILE__) . 'css/styles.css', false, '1.0.0');
+    wp_enqueue_style('pl_admin_styles');
 }
 
 /** 

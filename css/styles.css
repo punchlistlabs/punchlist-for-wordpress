@@ -1,4 +1,17 @@
 #create-quick-project {
-    text-align: center;
-    max-width: 100px;
+    padding: 10px 20px;
+    display: inline-block;
+}
+
+#create-project {
+    margin-top: 25px;
+}
+
+#set-up-api {
+    margin: 25px 0;
+}
+
+#set-up-api input{
+    padding: 10px 20px;
+    margin: 0 10px;
 }
