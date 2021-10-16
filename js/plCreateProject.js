@@ -23,11 +23,10 @@
               .addClass("button-secondary")
               .attr({ href: res.data.url, target: "_blank" })
               .off("click");
-          }, 5000);
+          }, 1000);
         }
       ).fail((err) => {
-        // alert(err.responseJSON.data.message)
-        console.dir(err);
+        alert(err.responseJSON.data.message);
       });
     }
   });
