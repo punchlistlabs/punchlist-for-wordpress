@@ -42,8 +42,8 @@ $dotenv->load();
 
 if (!is_admin()) {
     add_action('pre_get_posts', ['Punchlist\Preview', 'showPreview']);
-} else {
     add_action('wp_enqueue_scripts', 'loadScriptsAndStyles');
+} else {
     add_action('admin_enqueue_scripts', 'adminLoadScriptsAndStyles');
     add_action('admin_menu', 'addPunchlistToAdminMenu');
     add_action('wp_ajax_pl_check_integration', 'checkIntegration');
@@ -55,6 +55,7 @@ if (!is_admin()) {
 function loadScriptsAndStyles()
 {
     wp_enqueue_script('punchlist', $_ENV['PUNCHLIST_SCRIPT'], null, '1.0', true);
+    //wp_enqueue_script('punchlist', 'https://static.usepunchlist.com/js/usepunchlist.min.js?09182021', null, '1.0', true);
 }
 
 function adminLoadScriptsAndStyles()
