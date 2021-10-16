@@ -12,7 +12,9 @@
       },
       {
         success: (data, status) => {
-          // send the key, save it, mark the site as integrated, do cool shit
+          alert(
+            "API Integration Verified. Create Punchlist projects from the post editor."
+          );
         },
         error: (xhr, status, err) => {
           console.log(err);
