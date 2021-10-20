@@ -70,7 +70,7 @@ class Preview
         $args['pluid'] = uniqid();
         $args['post_to_preview'] = $this->post->ID;
 
-        $this->link = get_site_url() . '?' . http_build_query($args);
+        $this->link = get_site_url() . '/?' . http_build_query($args);
     }
 
 
@@ -84,12 +84,6 @@ class Preview
         }
 
         $postId = (int) $posts[0]->ID;
-
-        // If the post has gone live, redirect to its proper permalink.
-        if (in_array(get_post_status($postId), ['publish', 'private'])) {
-            wp_safe_redirect(get_permalink($postId), 301);
-            exit;
-        }
 
         // Set post status to publish so that it's visible.
         $posts[0]->post_status = 'publish';

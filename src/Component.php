@@ -16,10 +16,10 @@ class Component
 
     public function render()
     {
-        ob_start();
+        // ob_start();
         foreach ($this->templates as $t) {
             include_once($this->templateDir . $t . '.php');
         }
-        ob_flush();
+        // ob_flush();
     }
 }

@@ -55,7 +55,6 @@ if (!is_admin()) {
 function loadScriptsAndStyles()
 {
     wp_enqueue_script('punchlist', $_ENV['PUNCHLIST_SCRIPT'], null, '1.0', true);
-    //wp_enqueue_script('punchlist', 'https://static.usepunchlist.com/js/usepunchlist.min.js?09182021', null, '1.0', true);
 }
 
 function adminLoadScriptsAndStyles()
