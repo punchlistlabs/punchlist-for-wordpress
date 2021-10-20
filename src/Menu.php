@@ -18,13 +18,14 @@ class Menu
      */
     public function addMenuPage()
     {
+        $icon = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(__DIR__ . '/../images/pl-icon.svg'));
         add_menu_page(
             'Punchlist',
             'Punchlist',
             'manage_options',
             'punchlist-admin-page',
             [$this->component, 'render'],
-            plugin_dir_url(__FILE__) . '../images/pl-logo-small.png'
+            $icon
         );
     }
 
