@@ -8,7 +8,8 @@
         <input type="password" name="api-key" value="<?php echo get_user_meta(get_current_user_id(), 'pl-api-key', true) ?>" placeholder="API Key" />
         <input type="submit" id="submit-api-key" class="button button-primary" alt="Integrate with Punchlist API" value="Verify API Integration" />
     </form>
-    <hr>
+    <!-- We can uncomment this to have Quick Project functionality -->
+    <!-- <hr>
     <form id="create-project">
         <div>
             <p><small>This will create a project using the home page of the site.<br>You can create projects for draft previews by registering an API key</small></p>
@@ -17,5 +18,5 @@
                 <a id="create-quick-project" class="button button-primary" target="_blank" alt="Create a Quick Project">Create a Quick Project for <?php echo get_bloginfo('name'); ?></a>
             </p>
         </div>
-    </form>
+    </form> -->
 </div><!-- .wrap -->
