@@ -40,7 +40,7 @@ class Menu
             'Punchlist',
             [$this->component, 'render'],
             ['page', 'post'],
-            'side'
+            'side',
         );
     }
 }

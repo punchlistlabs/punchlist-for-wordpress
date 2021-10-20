@@ -1,10 +1,5 @@
 <?php
 
-use Punchlist\Menu;
-use Punchlist\Component;
-use Punchlist\Api;
-use Punchlist\Preview;
-
 /*
 Plugin Name: WP Punchlist
 Plugin URI: https://usepunchlist.com/
@@ -12,6 +7,8 @@ Description: Harness the magic of Punchlist from the WP Dashboard
 Author: Punchlist Labs
 Version: 1.0
 Author URI: https://usepunchlist.com/
+Credits: This plugin borrows heavily from Public Post Preview plugin but Dominik Schilling. WP won't allow
+two headers on the same plugin, but let's give credit where it's due.
 License: GPLv2 or later
 
 Copyright (C) 2021 Punchlist Labs Inc.
@@ -31,14 +28,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+use Punchlist\Menu;
+use Punchlist\Component;
+use Punchlist\Api;
+use Punchlist\Preview;
+
+
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
     die;
 }
 
-require __DIR__ . '/vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+putenv('PUNCHLIST_URL=https://staging.usepunchlist.com/api/v1');
+putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/punchlist-staging.min.js?10122021');
 
 if (!is_admin()) {
     add_action('pre_get_posts', ['Punchlist\Preview', 'showPreview']);
