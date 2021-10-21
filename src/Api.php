@@ -31,12 +31,12 @@ class Api
 
     public function get($path)
     {
-        return wp_remote_get($_ENV['PUNCHLIST_URL'] . $path, $this->wpargs)['body'];
+        return wp_remote_get(getenv('PUNCHLIST_URL') . $path, $this->wpargs)['body'];
     }
 
     public function post($path, $args = [])
     {
-        $url = $_ENV['PUNCHLIST_URL'] . $path;
+        $url = getenv('PUNCHLIST_URL') . $path;
         $postArgs = array_merge($this->args, $args);
         $client = new Client();
         $res = $client->post(

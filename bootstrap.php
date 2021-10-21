@@ -1,5 +1,10 @@
 <?php
 
+use Punchlist\Menu;
+use Punchlist\Component;
+use Punchlist\Api;
+use Punchlist\Preview;
+
 /*
 Plugin Name: WP Punchlist
 Plugin URI: https://usepunchlist.com/
@@ -28,19 +33,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-use Punchlist\Menu;
-use Punchlist\Component;
-use Punchlist\Api;
-use Punchlist\Preview;
-
-
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
     die;
 }
 
-putenv('PUNCHLIST_URL=https://staging.usepunchlist.com/api/v1');
-putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/punchlist-staging.min.js?10122021');
+require __DIR__ . '/vendor/autoload.php';
+
+putenv('PUNCHLIST_URL=https://app.usepunchlist.com/api/v1');
+putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/punchlist.min.js?10122021');
 
 if (!is_admin()) {
     add_action('pre_get_posts', ['Punchlist\Preview', 'showPreview']);
@@ -51,12 +52,20 @@ if (!is_admin()) {
     add_action('wp_ajax_pl_check_integration', 'checkIntegration');
     add_action('wp_ajax_pl-create-project-edit-screen', 'createPostPreview');
     add_action('add_meta_boxes', 'addPlMetaBox');
+    add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'settingsLink');
 }
-// }
+
+function settingsLink($links)
+{
+    $links[] = '<a href="' .
+        admin_url('admin.php?page=punchlist-admin-page') .
+        '">' . __('Settings') . '</a>';
+    return $links;
+}
 
 function loadScriptsAndStyles()
 {
-    wp_enqueue_script('punchlist', $_ENV['PUNCHLIST_SCRIPT'], null, '1.0', true);
+    wp_enqueue_script('punchlist', getenv('PUNCHLIST_SCRIPT'), null, '1.0', true);
 }
 
 function adminLoadScriptsAndStyles()
@@ -64,14 +73,14 @@ function adminLoadScriptsAndStyles()
     wp_enqueue_script('pl-admin-script', plugin_dir_url(__DIR__) . 'wp-punchlist/js/plAdminScript.js', ['jquery'], null, true);
     wp_localize_script('pl-admin-script', 'localVars', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
-        'plUrl' => $_ENV['PUNCHLIST_URL'],
-        'qpUrl' => $_ENV['PUNCHLIST_URL'] . '/project/create?domain=' . urlencode(site_url())
+        'plUrl' => getenv('PUNCHLIST_URL'),
+        'qpUrl' => getenv('PUNCHLIST_URL') . '/project/create?domain=' . urlencode(site_url())
     ]);
 
     wp_enqueue_script('pl-create-project', plugin_dir_url(__DIR__) . 'wp-punchlist/js/plCreateProject.js', ['jquery'], null, true);
     wp_localize_script('pl-create-project', 'localVars', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
-        'plUrl' => $_ENV['PUNCHLIST_URL'],
+        'plUrl' => getenv('PUNCHLIST_URL'),
         'plApiKey' => get_user_meta(get_current_user_id(), 'pl-api-key', true),
     ]);
 

@@ -4,6 +4,6 @@
         "guzzlehttp/guzzle": "^7.3"
     },
     "autoload": {
-        "psr-4": {"Punchlist\\": "src"}
+        "psr-4": {"Punchlist\\": "src/"}
     }
 }
