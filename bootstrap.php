@@ -41,7 +41,7 @@ if (!defined('WPINC')) {
 require __DIR__ . '/vendor/autoload.php';
 
 putenv('PUNCHLIST_URL=https://app.usepunchlist.com/api/v1');
-putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/punchlist.min.js?10122021');
+putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/usepunchlist.min.js?10122021');
 
 if (!is_admin()) {
     add_action('pre_get_posts', ['Punchlist\Preview', 'showPreview']);
