@@ -1,6 +1,18 @@
 (function ($) {
   $("#create-quick-project").attr("href", localVars.qpUrl);
 
+  $(window).on("load", () => {
+    $projectSelect = $('#set-default-project');
+    $.post(ajaxurl, {
+      "api-key": $('input[name="api-key"]').val(),
+      action: "pl_get_projects",
+    },(res, status) => {
+      res.data.forEach((p) => {
+        $projectSelect.append($("<option>").val(p.id).text(p.name));
+      });
+    });
+  });
+
   $("#set-up-api").on("submit", (e) => {
     e.preventDefault();
 

@@ -40,8 +40,8 @@ if (!defined('WPINC')) {
 
 require __DIR__ . '/vendor/autoload.php';
 
-putenv('PUNCHLIST_URL=https://app.usepunchlist.com/api/v1');
-putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/usepunchlist.min.js?10122021');
+putenv('PUNCHLIST_URL=https://punchlist.test/api');
+putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/usepunchlist.min.js?10212022');
 
 if (!is_admin()) {
     add_action('pre_get_posts', ['Punchlist\Preview', 'showPreview']);
@@ -50,6 +50,7 @@ if (!is_admin()) {
     add_action('admin_enqueue_scripts', 'adminLoadScriptsAndStyles');
     add_action('admin_menu', 'addPunchlistToAdminMenu');
     add_action('wp_ajax_pl_check_integration', 'checkIntegration');
+    add_action('wp_ajax_pl_get_projects', 'getProjects');
     add_action('wp_ajax_pl-create-project-edit-screen', 'createPostPreview');
     add_action('add_meta_boxes', 'addPlMetaBox');
     add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'settingsLink');
@@ -65,7 +66,7 @@ function settingsLink($links)
 
 function loadScriptsAndStyles()
 {
-    wp_enqueue_script('punchlist', getenv('PUNCHLIST_SCRIPT'), null, '1.0', true);
+    wp_enqueue_script('punchlist', getenv('PUNCHLIST_SCRIPT'), null, '1.0', false);
 }
 
 function adminLoadScriptsAndStyles()
@@ -146,6 +147,19 @@ function createPostPreview()
         }
     } else {
         wp_send_json_error('Access denied', 403);
+    }
+}
+
+function getProjects()
+{
+    $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
+    $api = new Api($apiKey);
+    $projects = $api->getProjects();
+
+    if($projects) {
+        wp_send_json(['message' => 'success', 'data' => json_decode($projects)]);
+    } else {
+        wp_send_json_error(['message' => 'Error retrieving projects']);
     }
 }
 

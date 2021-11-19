@@ -21,12 +21,17 @@ class Api
 
     public function verifyIntegration()
     {
-        return $this->get('/ping');
+        return $this->get('/v1/ping');
     }
 
     public function createProject($url, $name)
     {
-        return $this->post('/projects/alt', ['form_params' => ['domain' => $url, 'name' => $name, 'type' => 'web', 'no_proxy' => true]]);
+        return $this->post('/v1/projects/alt', ['form_params' => ['domain' => $url, 'name' => $name, 'type' => 'web', 'no_proxy' => false]]);
+    }
+
+    public function getProjects()
+    {
+        return $this->get('/v2/projects');
     }
 
     public function get($path)
@@ -38,8 +43,7 @@ class Api
     {
         $url = getenv('PUNCHLIST_URL') . $path;
         $postArgs = array_merge($this->args, $args);
-        $client = new Client();
-        $res = $client->post(
+        $res = $this->client->post(
             $url,
             $postArgs
         );
