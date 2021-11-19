@@ -30,4 +30,18 @@
       });
     }
   });
+
+  $(document).ready(() => {
+    $projectSelect = $('#pl-create-project-get-projects');
+    $.post(ajaxurl, {
+      action: "pl_get_projects",
+      _ajax_nonce: $("#plnonce2").val(),
+    },(res, status) => {
+      const $projectSelect = $("#pl-add-to-project-select");
+      res.data.forEach((p) => {
+        $projectSelect.append($("<option></option>").val(p.id).text(p.name));
+      });
+    });
+  });
+
 })(this.jQuery);

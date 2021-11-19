@@ -1,14 +1,14 @@
 (function ($) {
   $("#create-quick-project").attr("href", localVars.qpUrl);
 
-  $(window).on("load", () => {
+  $(document).ready(() => {
     $projectSelect = $('#set-default-project');
     $.post(ajaxurl, {
-      "api-key": $('input[name="api-key"]').val(),
       action: "pl_get_projects",
+      pl_get_projects: 
     },(res, status) => {
       res.data.forEach((p) => {
-        $projectSelect.append($("<option>").val(p.id).text(p.name));
+        $projectSelect.append($("<option></option>").val(p.id).text(p.name));
       });
     });
   });

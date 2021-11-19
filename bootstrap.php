@@ -152,15 +152,17 @@ function createPostPreview()
 
 function getProjects()
 {
-    $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
-    $api = new Api($apiKey);
-    $projects = $api->getProjects();
+    //if (check_ajax_referer()) {
+        $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
+        $api = new Api($apiKey);
+        $projects = $api->getProjects();
 
-    if($projects) {
-        wp_send_json(['message' => 'success', 'data' => json_decode($projects)]);
-    } else {
-        wp_send_json_error(['message' => 'Error retrieving projects']);
-    }
+        if($projects) {
+            wp_send_json(['message' => 'success', 'data' => json_decode($projects)]);
+        } else {
+            wp_send_json_error(['message' => 'Error retrieving projects']);
+        }
+   // }
 }
 
 
