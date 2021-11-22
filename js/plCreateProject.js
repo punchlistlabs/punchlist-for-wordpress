@@ -12,7 +12,7 @@
           checked: true,
           _ajax_nonce: $("#plnonce").val(),
           name: $(".editor-post-title__input").val() || null,
-          action: "pl-create-project-edit-screen",
+          action: "pl_create_project_edit_screen",
         },
         function (res) {
           $("#pl-create-project-edit-screen").text("Creating project...");
@@ -43,5 +43,9 @@
       });
     });
   });
+
+  $('#pl-add-to-project-select').change((e) => {
+    $('#pl-add-to-project').css('display', 'inline-block').text(`Add to Project ${e.target.selectedOptions[0].text}`);
+  })
 
 })(this.jQuery);

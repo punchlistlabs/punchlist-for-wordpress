@@ -51,7 +51,7 @@ if (!is_admin()) {
     add_action('admin_menu', 'addPunchlistToAdminMenu');
     add_action('wp_ajax_pl_check_integration', 'checkIntegration');
     add_action('wp_ajax_pl_get_projects', 'getProjects');
-    add_action('wp_ajax_pl-create-project-edit-screen', 'createPostPreview');
+    add_action('wp_ajax_pl_create_project_edit_screen', 'createPostPreview');
     add_action('add_meta_boxes', 'addPlMetaBox');
     add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'settingsLink');
 }
@@ -124,7 +124,7 @@ function checkIntegration()
 
 function createPostPreview()
 {
-    if (check_ajax_referer('pl-create-project-edit-screen')) {
+    if (check_ajax_referer('pl_create_project_edit_screen')) {
         if (!in_array(get_post_status($_POST['post_ID']), ['publish', 'future', 'draft', 'pending'])) {
             wp_send_json_error(['message' => 'Unable to create a Punchlist project at this time. Did you save the post?'], 400);
         }

@@ -25,3 +25,7 @@
 #pl-add-to-project {
     margin: 10px 0;
 }
+
+#pl-add-to-project {
+    display: none;
+}
