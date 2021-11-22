@@ -152,7 +152,7 @@ function createPostPreview()
 
 function getProjects()
 {
-    //if (check_ajax_referer()) {
+    if (check_ajax_referer('pl_get_projects', '_ajax_nonce')) {
         $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
         $api = new Api($apiKey);
         $projects = $api->getProjects();
@@ -162,7 +162,7 @@ function getProjects()
         } else {
             wp_send_json_error(['message' => 'Error retrieving projects']);
         }
-   // }
+    }
 }
 
 
