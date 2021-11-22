@@ -9,12 +9,7 @@
         </select>
         <a class="button button-primary" id="pl-add-to-project"></a>
     </div>
-    <!-- <?php
-        if ($plUrl = get_post_meta(get_the_id(), 'pl-project-url', true)) {
-    ?>
-        <a class="button button-secondary" href="<?php echo $plUrl ?>" target="_blank">Go To Punchlist Project</a>
-        -->
-    <?php } 
+    <?php
          wp_nonce_field('pl_create_project_edit_screen', 'plnonce'); 
          wp_nonce_field('pl_get_projects', 'plnonce2'); 
     ?>    
