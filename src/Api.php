@@ -29,6 +29,11 @@ class Api
         return $this->post('/v1/projects/alt', ['form_params' => ['domain' => $url, 'name' => $name, 'type' => 'web', 'no_proxy' => false]]);
     }
 
+    public function addPageToProject($url, $project_id, $title = "")
+    {
+        return $this->post('/v2/pages', ['form_params' => ['url' => $url, 'title' => $title, 'type' => 'web', 'project_id' => $project_id]]);
+    }
+
     public function getProjects()
     {
         return $this->get('/v2/projects');

@@ -52,6 +52,7 @@ if (!is_admin()) {
     add_action('wp_ajax_pl_check_integration', 'checkIntegration');
     add_action('wp_ajax_pl_get_projects', 'getProjects');
     add_action('wp_ajax_pl_create_project_edit_screen', 'createPostPreview');
+    add_action('wp_ajax_pl_add_to_project_edit_screen', 'addPageToProject');
     add_action('add_meta_boxes', 'addPlMetaBox');
     add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'settingsLink');
 }
@@ -140,10 +141,36 @@ function createPostPreview()
         $newProject = $api->createProject($preview->link, $projectName);
 
         if ($newProject->url) {
-            update_post_meta($_POST['post_ID'], 'pl-project-url', $newProject->url);
             wp_send_json(['message' => 'success', 'data' => ['url' => $newProject->url]]);
         } else {
             wp_send_json_error(['message' => 'Error creating project'], 400);
+        }
+    } else {
+        wp_send_json_error('Access denied', 403);
+    }
+}
+
+function addPageToProject()
+{
+    if (check_ajax_referer('pl_create_project_edit_screen')) {
+        if (!in_array(get_post_status($_POST['post_ID']), ['publish', 'future', 'draft', 'pending'])) {
+            wp_send_json_error(['message' => 'Unable to create a Punchlist project at this time. Did you save the post?'], 400);
+        }
+
+        $preview = new Preview(get_post($_POST['post_ID']));
+        $preview->createPreview();
+
+        //$publicUrl = DSPublicPostPreview::publicPreviewUrl($_POST['post_ID']);
+        $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
+        $api = new Api($apiKey);
+
+        $pageTitle = $_POST['name'] ?? bloginfo('name') . ' ' . date('m-d-Y');
+        $newPage = $api->addPageToProject($preview->link, (int) $_POST['project_id'], $pageTitle);
+
+        if ($newPage->direct_link) {
+            wp_send_json(['message' => 'success', 'data' => ['url' => $newPage->direct_link]]);
+        } else {
+            wp_send_json_error(['message' => 'Error adding page to project'], 400);
         }
     } else {
         wp_send_json_error('Access denied', 403);
