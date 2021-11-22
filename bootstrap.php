@@ -40,8 +40,8 @@ if (!defined('WPINC')) {
 
 require __DIR__ . '/vendor/autoload.php';
 
-putenv('PUNCHLIST_URL=https://punchlist.test/api');
-putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/punchlist-local.min.js?10212022');
+putenv('PUNCHLIST_URL=https://usepunchlist.com/api');
+putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/usepunchlist.min.js?112221');
 
 if (!is_admin()) {
     add_action('pre_get_posts', ['Punchlist\Preview', 'showPreview']);

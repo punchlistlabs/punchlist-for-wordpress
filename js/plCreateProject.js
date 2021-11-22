@@ -46,7 +46,6 @@
           project_id: $('#pl-add-to-project-select').val()
         },
         function (res) {
-          debugger;
           $("#pl-add-to-project").text("Adding page to project...");
           setTimeout(() => {
             $("#pl-add-to-project")

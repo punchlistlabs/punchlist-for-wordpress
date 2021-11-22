@@ -29,3 +29,11 @@
 #pl-add-to-project {
     display: none;
 }
+
+#pl-add-to-project-select {
+    width: 87%;
+}
+
+#punchlist_metabox .postbox-header {
+    border-bottom: none;
+}
