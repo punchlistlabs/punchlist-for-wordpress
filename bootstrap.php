@@ -45,19 +45,19 @@ putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/usepunchlist.min.js?
 
 if (!is_admin()) {
     add_action('pre_get_posts', ['Punchlist\Preview', 'showPreview']);
-    add_action('wp_enqueue_scripts', 'loadScriptsAndStyles');
+    add_action('wp_enqueue_scripts', 'punchlistLoadScriptsAndStyles');
 } else {
-    add_action('admin_enqueue_scripts', 'plAdminLoadScriptsAndStyles');
-    add_action('admin_menu', 'plAddToMenu');
-    add_action('wp_ajax_pl_check_integration', 'plCheckIntegration');
-    add_action('wp_ajax_pl_get_projects', 'getProjects');
-    add_action('wp_ajax_pl_create_project_edit_screen', 'plCreatePostPreview');
-    add_action('wp_ajax_pl_add_to_project_edit_screen', 'plAddPageToProject');
-    add_action('add_meta_boxes', 'addPlMetaBox');
-    add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'settingsLink');
+    add_action('admin_enqueue_scripts', 'punchlistAdminLoadScriptsAndStyles');
+    add_action('admin_menu', 'punchlistAddToMenu');
+    add_action('wp_ajax_pl_check_integration', 'punchlistCheckIntegration');
+    add_action('wp_ajax_pl_get_projects', 'punchlistGetProjects');
+    add_action('wp_ajax_pl_create_project_edit_screen', 'punchlistCreatePostPreview');
+    add_action('wp_ajax_pl_add_to_project_edit_screen', 'punchlistAddPageToProject');
+    add_action('add_meta_boxes', 'punchlistAddMetaBox');
+    add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'punchlistSettingsLink');
 }
 
-function settingsLink($links)
+function punchlistSettingsLink($links)
 {
     $links[] = '<a href="' .
         admin_url('admin.php?page=punchlist-admin-page') .
@@ -65,12 +65,12 @@ function settingsLink($links)
     return $links;
 }
 
-function loadScriptsAndStyles()
+function punchlistLoadScriptsAndStyles()
 {
     wp_enqueue_script('punchlist', getenv('PUNCHLIST_SCRIPT'), null, '1.0', false);
 }
 
-function plAdminLoadScriptsAndStyles()
+function punchlistAdminLoadScriptsAndStyles()
 {
     wp_enqueue_script('pl-admin-script', plugin_dir_url(__DIR__) . 'punchlist/js/plAdminScript.js', ['jquery'], null, true);
     wp_localize_script('pl-admin-script', 'localVars', [
@@ -93,7 +93,7 @@ function plAdminLoadScriptsAndStyles()
  * Get punchlist on the sidebar
  */
 
-function plAddToMenu()
+function punchlistAddToMenu()
 {
     $page = new Component(['admin'], __DIR__ . '/templates/pages/');
     $menu = new Menu($page);
@@ -104,7 +104,7 @@ function plAddToMenu()
  * Check the integration to the Punchlist API
  */
 
-function plCheckIntegration()
+function punchlistCheckIntegration()
 {
     if (check_ajax_referer('pl_check_integration')) {
         $apiKey = sanitize_meta('pl-api-key', sanitize_text_field($_POST['api-key']), 'user');
@@ -127,7 +127,7 @@ function plCheckIntegration()
  * Create a project through the Punchlist API
  */
 
-function plCreatePostPreview()
+function punchlistCreatePostPreview()
 {
     if (check_ajax_referer('pl_create_project_edit_screen')) {
         $postId = is_numeric($_POST['post_ID']) ? (int) $_POST['post_ID'] : null;
@@ -158,7 +158,7 @@ function plCreatePostPreview()
     }
 }
 
-function plAddPageToProject()
+function punchlistAddPageToProject()
 {
     if (check_ajax_referer('pl_create_project_edit_screen')) {
         $postId = is_numeric($_POST['post_ID']) ? (int) $_POST['post_ID'] : null;
@@ -191,7 +191,7 @@ function plAddPageToProject()
     }
 }
 
-function getProjects()
+function punchlistGetProjects()
 {
     if (check_ajax_referer('pl_get_projects', '_ajax_nonce')) {
         $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
@@ -211,7 +211,7 @@ function getProjects()
  * project creation
  */
 
-function addPlMetaBox()
+function punchlistAddMetaBox()
 {
     $metaBox = new Component(['edit'], __DIR__ . '/templates/metaboxes/');
     $menu = new Menu($metaBox);

@@ -9,10 +9,5 @@
             <input type="password" name="api-key" value="<?php echo get_user_meta(get_current_user_id(), 'pl-api-key', true) ?>" placeholder="API Key" />
             <input type="submit" id="submit-api-key" class="button button-primary" alt="Integrate with Punchlist API" value="Verify API Integration" />
         </div>
-        <!-- <div>
-            <select name="set-default-project" id="set-default-project">
-                <option value="">Set Default Project</option>
-            </select>
-        </div> -->
     </form>
-</div><!-- .wrap -->
+</div>

@@ -36,7 +36,7 @@ class Api
 
     public function getProjects()
     {
-        return $this->get('/v2/projects');
+        return $this->get('/v2/projects?type=web');
     }
 
     public function get($path)
