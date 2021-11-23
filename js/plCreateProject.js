@@ -20,7 +20,7 @@
               .text("Go To Punchlist Project")
               .removeClass("button-primary")
               .addClass("button-secondary")
-              .attr({ href: res.data.url, target: "_blank" })
+              .attr({ href: res.data.url, target: "_blank", id: "go-to-pl-project" })
               .off("click");
           }, 1000);
         }

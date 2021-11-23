@@ -41,7 +41,8 @@ class Api
 
     public function get($path)
     {
-        return wp_remote_get(getenv('PUNCHLIST_URL') . $path, $this->wpargs)['body'];
+        $res = json_decode(wp_remote_get(getenv('PUNCHLIST_URL') . $path, $this->wpargs)['body'], true);
+        return $this->sanitizeResponse($res);
     }
 
     public function post($path, $args = [])
@@ -53,6 +54,20 @@ class Api
             $postArgs
         );
 
-        return json_decode($res->getBody()->getContents());
+        $res = json_decode($res->getBody()->getContents(), true);
+        return $this->sanitizeResponse($res);
+    }
+
+    protected function sanitizeResponse(iterable $res)
+    {
+        $func = function(&$v, &$k) {
+            $v = esc_html($v);
+            $k = esc_html($k);
+            return [$k => $v];
+        };
+
+        array_walk_recursive($res, $func);
+
+        return $res;
     }
 }

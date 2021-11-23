@@ -1,5 +1,5 @@
 # Create Punchlist Projects from your WordPress Dashboard and Gather Feedback in a Whole New Way
 
 * Requirements
-    * Punchlist [API key](https://usepunchlist.com)
+    * Punchlist [API key](https://app.usepunchlist.com)
     

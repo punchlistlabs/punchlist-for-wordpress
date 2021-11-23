@@ -1,17 +1,4 @@
 (function ($) {
-  $("#create-quick-project").attr("href", localVars.qpUrl);
-
-  // $(document).on("load", () => {
-  //   $projectSelect = $('#set-default-project');
-  //   $.post(ajaxurl, {
-  //     action: "pl_get_projects",
-  //   },(res, status) => {
-  //     res.data.forEach((p) => {
-  //       $projectSelect.append($("<option></option>").val(p.id).text(p.name));
-  //     });
-  //   });
-  // });
-
   $("#set-up-api").on("submit", (e) => {
     e.preventDefault();
 
