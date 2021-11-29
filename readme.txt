@@ -3,7 +3,7 @@ Contributors: plnic
 Tags: punchlist, collaboration, annotation, tools
 Requires at least: 5.5
 Tested up to: 5.8
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -29,6 +29,9 @@ Head to the [Punchlist website](https://app.usepunchlist.com/register)
 Once you have an account head you ["My Settings"](https://app.usepunchlist.com/settings#/api) and fill out the form.
 
 == Changelog ==
+= 1.2.2 =
+* Corrected version mismatch in code vs README.
+
 = 1.2.1 =
 * Updated method names to avoid collisions.
 
@@ -44,6 +47,9 @@ Once you have an account head you ["My Settings"](https://app.usepunchlist.com/s
 * Provides the ability to create projects from the edit screen.
 
 == Upgrade Notice == 
+
+= 1.2.2 =
+* Avoid a version mismatch.
 
 = 1.2.1 =
 * Prevents possible conflicts with other third party code.

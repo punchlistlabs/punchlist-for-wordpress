@@ -2,10 +2,10 @@
 
 /*
 Plugin Name: Punchlist
-Plugin URI: https://punchlist.com/wordpress
+Plugin URI: https://usepunchlist.com/wordpress?utm_source=wordpress-directory&utm_medium=web
 Description: Harness the magic of Punchlist from the WP Dashboard
 Author: Punchlist Labs
-Version: 1.3
+Version: 1.2.2
 Author URI: https://punchlist.com
 Credits: This plugin borrows heavily from Public Post Preview plugin but Dominik Schilling. WP won't allow
 two headers on the same plugin, but let's give credit where it's due.
