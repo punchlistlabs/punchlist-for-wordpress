@@ -6,7 +6,7 @@
     <form id="set-up-api">
         <!-- <label for="api-key">API Key</label> -->
         <div>
-            <input type="password" name="api-key" value="<?php echo get_user_meta(get_current_user_id(), 'pl-api-key', true) ?>" placeholder="API Key" />
+            <input type="password" name="api-key" placeholder="API Key" />
             <input type="submit" id="submit-api-key" class="button button-primary" alt="Integrate with Punchlist API" value="Verify API Integration" />
         </div>
     </form>
