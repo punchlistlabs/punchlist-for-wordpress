@@ -3,7 +3,7 @@ Contributors: plnic
 Tags: punchlist, collaboration, annotation, tools
 Requires at least: 5.5
 Tested up to: 5.8
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -22,13 +22,17 @@ We are always looking for ways to improve, so please send us any feedback, bug r
 
 = How do I get a Punchlist account? =
 
-Head to the [Punchlist website](https://app.usepunchlist.com/register)
+Head to the [Punchlist website](https://app.punchlist.com/register)
 
 = How do I get an API key? =
 
-Once you have an account head you ["My Settings"](https://app.usepunchlist.com/settings#/api) and fill out the form.
+Once you have an account head you ["My Settings"](https://app.punchlist.com/settings#/api) and fill out the form.
 
 == Changelog ==
+= 1.2.4 =
+* Updated domains to match Punchlist's infrastructure changes
+* Updated all dependecies to their latest versions.
+
 = 1.2.3 =
 * Removed pre-populated field value from PL API key
 
@@ -50,6 +54,9 @@ Once you have an account head you ["My Settings"](https://app.usepunchlist.com/s
 * Provides the ability to create projects from the edit screen.
 
 == Upgrade Notice == 
+= 1.2.4 = 
+* Fixes issues with API communication to the Punchlist application.
+
 = 1.2.3 =
 * The removal of the value removes a possible unescaped value from being echo'd.
 

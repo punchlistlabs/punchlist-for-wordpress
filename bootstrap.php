@@ -5,7 +5,7 @@ Plugin Name: Punchlist
 Plugin URI: https://usepunchlist.com/wordpress?utm_source=wordpress-directory&utm_medium=web
 Description: Harness the magic of Punchlist from the WP Dashboard
 Author: Punchlist Labs
-Version: 1.2.3
+Version: 1.2.4
 Author URI: https://punchlist.com
 Credits: This plugin borrows heavily from Public Post Preview plugin but Dominik Schilling. WP won't allow
 two headers on the same plugin, but let's give credit where it's due.
@@ -40,8 +40,8 @@ if (!defined('WPINC')) {
 
 require __DIR__ . '/vendor/autoload.php';
 
-putenv('PUNCHLIST_URL=https://app.usepunchlist.com/api');
-putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/usepunchlist.min.js?112221');
+putenv('PUNCHLIST_URL=https://app.punchlist.com/api');
+putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/punchlist.min.js?121521');
 
 if (!is_admin()) {
     add_action('pre_get_posts', ['Punchlist\Preview', 'showPreview']);
