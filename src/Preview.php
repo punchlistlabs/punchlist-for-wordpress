@@ -66,7 +66,7 @@ class Preview
 
     public static function showPreview($query)
     {
-        if ($_GET['pluid'] && $_GET['post_to_preview'] && self::verifyPreviewCode($_GET['post_to_preview'], $_GET['pluid'])) {
+        if (isset($_GET['pluid']) && isset($_GET['post_to_preview']) && self::verifyPreviewCode($_GET['post_to_preview'], $_GET['pluid'])) {
             add_filter('posts_results', [__CLASS__, 'makePostViewable'], 10, 2);
         }
     }

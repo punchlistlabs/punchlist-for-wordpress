@@ -1,10 +1,10 @@
 === Punchlist ===
 Contributors: plnic
-Tags: punchlist, collaboration, annotation, tools
+Tags: punchlist, collaboration, feedback, annotation, tools
 Requires at least: 5.5
-Tested up to: 5.8
-Stable tag: 1.2.4
-Requires PHP: 7.0
+Tested up to: 6.1.1
+Stable tag: 1.4.4
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,9 +26,45 @@ Head to the [Punchlist website](https://app.punchlist.com/register)
 
 = How do I get an API key? =
 
-Once you have an account head you ["My Settings"](https://app.punchlist.com/settings#/api) and fill out the form.
+Once you have an account head you ["My Settings"](https://app.punchlist.com/user/tokens) and fill out the form.
 
 == Changelog ==
+= 1.4.4 =
+* Moves remote Punchlist script to the footer
+* Updated installation instructions
+
+= 1.4.0 =
+* Prevents unnecessary warning
+
+= 1.3.8 =
+* Version bump
+
+= 1.3.7 =
+* Re-enables PHP 7.4 compatibility. 
+
+= 1.3.6 =
+* Fixed client error preventing retrieval of current projects
+
+= 1.3.4 =
+* Version bump
+
+= 1.3.2 =
+* URL fix
+
+= 1.3.0 =
+* Re-implements draft preview to work with the recently release Punchlist 2.0.
+
+= 1.2.8 =
+* Rolled back incorrect PHP version requirement
+
+= 1.2.6 =
+* Updated all dependecies to their latest version.
+* Updates API endpoints.
+
+= 1.2.5 =
+* Fixes a bug which prevented retrieving name title in WP 5.9
+* Updated all dependecies to their latest version.
+
 = 1.2.4 =
 * Updated domains to match Punchlist's infrastructure changes
 * Updated all dependecies to their latest versions.
@@ -54,6 +90,13 @@ Once you have an account head you ["My Settings"](https://app.punchlist.com/sett
 * Provides the ability to create projects from the edit screen.
 
 == Upgrade Notice == 
+= 1.2.8 =
+* Updated API calls.
+
+= 1.2.5 =
+* Previous versions of this plugin won't be able to create a new Punchlist project in WP 5.9+
+* Adding pages to existing projects would still work but it's recommened to update for full functionality
+
 = 1.2.4 = 
 * Fixes issues with API communication to the Punchlist application.
 
