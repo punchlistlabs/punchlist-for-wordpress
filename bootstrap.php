@@ -7,16 +7,16 @@ use Punchlist\Preview;
 
 /*
 Plugin Name: WP Punchlist
-Plugin URI: https://usepunchlist.com/
+Plugin URI: https://punchlist.com/
 Description: Harness the magic of Punchlist from the WP Dashboard
 Author: Punchlist Labs
 Version: 1.0
-Author URI: https://usepunchlist.com/
+Author URI: https://punchlist.com/
 Credits: This plugin borrows heavily from Public Post Preview plugin but Dominik Schilling. WP won't allow
 two headers on the same plugin, but let's give credit where it's due.
 License: GPLv2 or later
 
-Copyright (C) 2021 Punchlist Labs Inc.
+Copyright (C) 2024 Marketwake.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
