@@ -176,7 +176,7 @@ function punchlistAddPageToProject()
             $api = new Api($apiKey);
 
             $pageTitle = sanitize_text_field($_POST['name']) ?: bloginfo('name') . ' ' . date('m-d-Y');
-            $projectId = is_numeric($_POST['project_id']) ? (int) $_POST['project_id'] : null;
+            $projectId = $_POST['project_id'];
             $newPage = $api->addPageToProject($preview->link, $projectId, $pageTitle);
          
             if ($newPage['share_link']) {

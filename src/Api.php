@@ -32,7 +32,7 @@ class Api
 
     public function createProject($url, $name)
     {
-        return $this->post('/projects', ['json' => ['domain' => $url, 'name' => $name, 'type' => 'web']]);
+        return $this->postJson('/projects', ['domain' => $url, 'name' => $name, 'type' => 'web']);
     }
 
     public function addPageToProject($url, $project_id, $title = "")
