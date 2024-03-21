@@ -10,7 +10,7 @@
           post_ID: $("#post_ID").val(),
           checked: true,
           _ajax_nonce: $("#plnonce").val(),
-          name: $(".editor-post-title__input").text() || null,
+          name: $(".editor-post-title__input").get(0).innerText || 'Punchlist for WordPress',
           action: "pl_create_project_edit_screen",
         },
         function (res) {
@@ -34,14 +34,14 @@
     if (typeof e !== "undefined") {
       e.preventDefault();
       e.stopPropagation();
-      
+
       $.post(
         ajaxurl,
         {
           post_ID: $("#post_ID").val(),
           checked: true,
           _ajax_nonce: $("#plnonce").val(),
-          name: $(".editor-post-title__input").text() || null,
+          name: $(".editor-post-title__input").val() || null,
           action: "pl_add_to_project_edit_screen",
           project_id: $('#pl-add-to-project-select').val()
         },
@@ -57,8 +57,7 @@
           }, 1000);
         }
       ).fail((err) => {
-        console.log(err);
-        // alert(err.responseJSON.data.message);
+        alert(err.responseJSON.data.message);
       });
     }
   });
@@ -68,13 +67,11 @@
     $.post(ajaxurl, {
       action: "pl_get_projects",
       _ajax_nonce: $("#plnonce2").val(),
-    }, (res, status) => {
+    },(res, status) => {
       const $projectSelect = $("#pl-add-to-project-select");
-      
-      for(projectIndex in res.data.items) {
-        const project = res.data.items[projectIndex]
-        $projectSelect.append($("<option></option>").val(project.id).text(project.name));
-      }
+      res.data.items.forEach((p) => {
+        $projectSelect.append($("<option></option>").val(p.id).text(p.name));
+      });
     });
   });
 

@@ -3,6 +3,7 @@
 namespace Punchlist;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class Api
 {
@@ -16,33 +17,39 @@ class Api
         $this->key = $apiKey;
         $this->wpargs = ['headers' => ['Authorization' => 'Bearer ' . $this->key, "Content-Type" => "multipart/form-data",], 'sslverify' => false];
         $this->args = ['headers' => ['Authorization' => 'Bearer ' . $this->key], 'verify' => false];
-        $this->client = new Client();
+        $this->client = new Client(['verify' => false]);
     }
 
     public function verifyIntegration()
     {
-        return $this->get('/v1/ping');
+        $tryProjects = $this->get('/projects');
+        if (isset($tryProjects['items'])) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function createProject($url, $name)
     {
-        return $this->post('/v1/projects/alt', ['form_params' => ['domain' => $url, 'name' => $name, 'type' => 'web', 'no_proxy' => false]]);
+        return $this->postJson('/projects', ['domain' => $url, 'name' => $name, 'type' => 'web']);
     }
 
     public function addPageToProject($url, $project_id, $title = "")
     {
-        return $this->post('/v2/pages', ['form_params' => ['url' => $url, 'title' => $title, 'type' => 'web', 'project_id' => $project_id]]);
+        return $this->postJson('/pages', ['url' => $url, 'title' => $title, 'project_id' => $project_id, 'type' => 'web']);
     }
 
     public function getProjects()
     {
-        return $this->get('/v2/projects?type=web');
+        return $this->get('/projects');
     }
 
     public function get($path)
     {
-        $res = json_decode(wp_remote_get(getenv('PUNCHLIST_URL') . $path, $this->wpargs)['body'], true);
-        return $this->sanitizeResponse($res);
+        $res = wp_remote_get(getenv('PUNCHLIST_URL') . $path, $this->wpargs);
+        $decoded = json_decode($res['body'], true);
+        return $decoded['data'] ? $this->sanitizeResponse($decoded['data']) : null;
     }
 
     public function post($path, $args = [])
@@ -55,7 +62,24 @@ class Api
         );
 
         $res = json_decode($res->getBody()->getContents(), true);
+
         return $this->sanitizeResponse($res);
+    }
+
+    public function postJson($path, $args = []) {
+        $postArgs = array_merge($this->args, ['json' => $args], ['Accept' => 'application/json']);
+        
+        $url = getenv('PUNCHLIST_URL') . $path;
+      
+        $res = $this->client->request(
+            'POST',
+            $url,
+            $postArgs
+        );
+    
+        $res = json_decode($res->getBody()->getContents(), true);
+        return $this->sanitizeResponse($res['data']);
+    
     }
 
     protected function sanitizeResponse(iterable $res)

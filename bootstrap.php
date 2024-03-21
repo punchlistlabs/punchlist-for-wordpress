@@ -2,16 +2,16 @@
 
 /*
 Plugin Name: Punchlist
-Plugin URI: https://usepunchlist.com/wordpress?utm_source=wordpress-directory&utm_medium=web
+Plugin URI: https://punchlist.com/integrations?utm_source=wordpress-directory&utm_medium=web
 Description: Harness the magic of Punchlist from the WP Dashboard
 Author: Punchlist Labs
-Version: 1.2.4
+Version: 1.4.4
 Author URI: https://punchlist.com
 Credits: This plugin borrows heavily from Public Post Preview plugin but Dominik Schilling. WP won't allow
 two headers on the same plugin, but let's give credit where it's due.
 License: GPLv2
 
-Copyright (C) 2021 Punchlist Labs Inc.
+Copyright (C) 2024 Marketwake.
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -28,9 +28,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-use Punchlist\Menu;
-use Punchlist\Component;
 use Punchlist\Api;
+use Punchlist\Component;
+use Punchlist\Menu;
 use Punchlist\Preview;
 
 // If this file is called directly, abort.
@@ -40,7 +40,7 @@ if (!defined('WPINC')) {
 
 require __DIR__ . '/vendor/autoload.php';
 
-putenv('PUNCHLIST_URL=https://app.punchlist.com/api');
+putenv('PUNCHLIST_URL=https://plv2.usepunchlist.com/api/public/v1');
 putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/punchlist.min.js?121521');
 
 if (!is_admin()) {
@@ -67,7 +67,7 @@ function punchlistSettingsLink($links)
 
 function punchlistLoadScriptsAndStyles()
 {
-    wp_enqueue_script('punchlist', getenv('PUNCHLIST_SCRIPT'), null, '1.0', false);
+    wp_enqueue_script('punchlist', getenv('PUNCHLIST_SCRIPT'), null, '2.4', true);
 }
 
 function punchlistAdminLoadScriptsAndStyles()
@@ -106,12 +106,14 @@ function punchlistAddToMenu()
 
 function punchlistCheckIntegration()
 {
+    
     if (check_ajax_referer('pl_check_integration')) {
+        
         $apiKey = sanitize_meta('pl-api-key', sanitize_text_field($_POST['api-key']), 'user');
+        
         $api = new Api($apiKey);
-        $res = $api->verifyIntegration();
-
-        if ($res['data']['ping'] === 'pong') {
+        
+        if ($api->verifyIntegration()) {
             update_user_meta(get_current_user_id(), 'pl-api-key', $apiKey);
             wp_send_json(['message' => 'success']);
         } else {
@@ -142,11 +144,11 @@ function punchlistCreatePostPreview()
             $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
             $api = new Api($apiKey);
 
-            $projectName = sanitize_text_field($_POST['name']) ?? bloginfo('name') . ' ' . date('m-d-Y');
+            $projectName = sanitize_text_field($_POST['name']) ? sanitize_text_field($_POST['name']) : 'Unnamed WP Project' . ' ' . date('m-d-Y');
             $newProject = $api->createProject($preview->link, $projectName);
-
-            if ($newProject['url']) {
-                wp_send_json(['message' => 'success', 'data' => ['url' => $newProject['url']]]);
+            
+            if ($newProject['data']['share_link']) {
+                wp_send_json(['message' => 'success', 'data' => ['url' => $newProject['data']['share_link']]]);
             } else {
                 wp_send_json_error(['message' => 'Error creating project'], 400);
             }
@@ -162,24 +164,23 @@ function punchlistAddPageToProject()
 {
     if (check_ajax_referer('pl_create_project_edit_screen')) {
         $postId = is_numeric($_POST['post_ID']) ? (int) $_POST['post_ID'] : null;
+        
         if ($postId) {
             if (!in_array(get_post_status($postId), ['publish', 'future', 'draft', 'pending'])) {
                 wp_send_json_error(['message' => 'Unable to create a Punchlist project at this time. Did you save the post?'], 400);
             }
-
+            
             $preview = new Preview(get_post($postId));
             $preview->createPreview();
-
-            //$publicUrl = DSPublicPostPreview::publicPreviewUrl($_POST['post_ID']);
             $apiKey = get_user_meta(get_current_user_id(), 'pl-api-key', true);
             $api = new Api($apiKey);
 
             $pageTitle = sanitize_text_field($_POST['name']) ?: bloginfo('name') . ' ' . date('m-d-Y');
-            $projectId = is_numeric($_POST['project_id']) ? (int) $_POST['project_id'] : null;
+            $projectId = $_POST['project_id'];
             $newPage = $api->addPageToProject($preview->link, $projectId, $pageTitle);
-
-            if ($newPage['direct_link']) {
-                wp_send_json(['message' => 'success', 'data' => ['url' => $newPage['direct_link']]]);
+         
+            if ($newPage['share_link']) {
+                wp_send_json(['message' => 'success', 'data' => ['url' => $newPage['share_link']]]);
             } else {
                 wp_send_json_error(['message' => 'Error adding page to project'], 400);
             }
@@ -199,10 +200,10 @@ function punchlistGetProjects()
         $projects = $api->getProjects();
 
         if ($projects) {
-            wp_send_json(['message' => 'success', 'data' => $projects]);
-        } else {
-            wp_send_json_error(['message' => 'Error retrieving projects']);
+            return wp_send_json(['message' => 'success', 'data' => $projects]);
         }
+        
+        return wp_send_json_error(['message' => 'Error retrieving projects']);
     }
 }
 
