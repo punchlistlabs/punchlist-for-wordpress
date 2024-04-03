@@ -70,13 +70,12 @@ class Api
         $postArgs = array_merge($this->args, ['json' => $args], ['Accept' => 'application/json']);
         
         $url = getenv('PUNCHLIST_URL') . $path;
-      
         $res = $this->client->request(
             'POST',
             $url,
             $postArgs
         );
-    
+        
         $res = json_decode($res->getBody()->getContents(), true);
         return $this->sanitizeResponse($res['data']);
     
