@@ -40,7 +40,7 @@ if (!defined('WPINC')) {
 
 require __DIR__ . '/vendor/autoload.php';
 
-putenv('PUNCHLIST_URL=https://plv2.usepunchlist.com/api/public/v1');
+putenv('PUNCHLIST_URL=https://plv2.test/api/public/v1');
 putenv('PUNCHLIST_SCRIPT=https://static.usepunchlist.com/js/punchlist.min.js?121521');
 
 if (!is_admin()) {
@@ -147,8 +147,8 @@ function punchlistCreatePostPreview()
             $projectName = sanitize_text_field($_POST['name']) ? sanitize_text_field($_POST['name']) : 'Unnamed WP Project' . ' ' . date('m-d-Y');
             $newProject = $api->createProject($preview->link, $projectName);
             
-            if ($newProject['data']['share_link']) {
-                wp_send_json(['message' => 'success', 'data' => ['url' => $newProject['data']['share_link']]]);
+            if ($newProject['share_link']) {
+                wp_send_json(['message' => 'success', 'data' => ['url' => $newProject['share_link']]]);
             } else {
                 wp_send_json_error(['message' => 'Error creating project'], 400);
             }
